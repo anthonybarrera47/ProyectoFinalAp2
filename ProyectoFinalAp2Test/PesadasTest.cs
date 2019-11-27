@@ -17,7 +17,7 @@ namespace ProyectoFinalAp2Test
         {
             Pesadas pesadas = new Pesadas()
             {
-                ProductorId = 1,
+                ProductorId = 2,
                 FactoriaId = 2,
                 PrecioFanega = 2400,
                 Fecha = DateTime.Now,
@@ -25,9 +25,10 @@ namespace ProyectoFinalAp2Test
                 TotalSacos = 1,
                 Humedad = 142,
                 TotalKiloGramos = 100,
-                UsuarioId = 1
+                UsuarioId = 1,
+                EmpresaId = 1
             };
-            pesadas.AgregarDetalle(new PesadasDetalle(0, pesadas.PesadaId, 1, 100, 2));
+            pesadas.AgregarDetalle(new PesadasDetalle(0, pesadas.PesadaId, 2, "Prueba", 100, 2));
             RepositorioPesadas repositorio = new RepositorioPesadas();
             Assert.IsTrue(repositorio.Guardar(pesadas));
         }
@@ -36,7 +37,7 @@ namespace ProyectoFinalAp2Test
         {
             RepositorioPesadas repositorio = new RepositorioPesadas();
             Pesadas pesadas = repositorio.Buscar(1);
-            pesadas.AgregarDetalle(new PesadasDetalle(0, pesadas.PesadaId, 1, 100, 2));
+            pesadas.AgregarDetalle(new PesadasDetalle(0, pesadas.PesadaId, 2, "Prueba", 100, 2));
             
             Assert.IsTrue(repositorio.Modificar(pesadas));
         }
@@ -50,7 +51,7 @@ namespace ProyectoFinalAp2Test
         public void Eliminar()
         {
             RepositorioPesadas repositorio = new RepositorioPesadas();
-            Assert.IsTrue(repositorio.Eliminar(1));
+            Assert.IsTrue(repositorio.Eliminar(2));
         }
     }
 }

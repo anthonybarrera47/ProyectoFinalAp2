@@ -22,6 +22,7 @@ namespace ProyectoFinalAp2Test
                 Cedula = "056-0069782-4",
                 FechaNacimiento = DateTime.Now,
                 UsuarioId = 1,
+                EmpresaId = 1,
                 Fecha = DateTime.Now
             };
             RepositorioBase<Productores> repositorio = new RepositorioBase<Productores>();
@@ -39,6 +40,7 @@ namespace ProyectoFinalAp2Test
                 Cedula = "056-0069782-4",
                 FechaNacimiento = DateTime.Now,
                 UsuarioId = 1,
+                EmpresaId = 1,
                 Fecha = DateTime.Now
             };
             RepositorioBase<Productores> repositorio = new RepositorioBase<Productores>();

@@ -18,7 +18,7 @@ namespace DAL
         public DbSet<Usuarios> Usuario { get; set; }
         public DbSet<Empresas> Empresas { get; set; }
         public DbSet<SolicitudUsuarios> SolicitudUsuarios { get; set; }
-        public Contexto() : base("ConStrWeb")
+        public Contexto() : base("ConStr")
         { }
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

@@ -66,6 +66,7 @@ namespace ProyectoFinalAp2.UI.Registros
             if (Request.Form["TipoUsuario"] != null)
                 tipo = Request.Form["TipoUsuario"].ToInt();
             user.TipoUsuario = (tipo == 0) ? TipoUsuario.Administrador : TipoUsuario.UsuarioNormal;
+            user.Empresa = Empresa.EmpresaID;
             return user;
         }
         private void Limpiar()

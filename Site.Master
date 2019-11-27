@@ -32,7 +32,7 @@
     <!-- Custom stylesheet - for your changes-->
     <link rel="stylesheet" href="Design/css/custom.css">
     <!-- Favicon-->
-    <link rel="shortcut icon" href="Design/img/favicon.ico">
+    <link rel="shortcut icon" href="Design/img/ico.ico">
 
 
     <!--Alerta Sweet-->
@@ -185,12 +185,12 @@
                         <div class="navbar-holder d-flex align-items-center justify-content-between">
                             <div class="navbar-header">
                                 <a id="toggle-btn" href="#" class="menu-btn"><i class="icon-bars"></i></a><a href="Default.aspx" class="navbar-brand">
-                                    <div class="brand-text d-none d-md-inline-block"><strong class="text-primary">Dashboard</strong></div>
+                                    <div class="brand-text d-none d-md-inline-block"><strong class="text-primary">Panel de Control</strong></div>
                                 </a>
                             </div>
                             <ul class="nav-menu list-unstyled d-flex flex-md-row align-items-md-center">
                                 <!-- Log out-->
-                                <li class="nav-item"><a runat="server" id="LogOut" onserverclick="LogOut_ServerClick" class="nav-link logout"><span class="d-none d-sm-inline-block">Logout</span><i class="fa fa-sign-out"></i></a></li>
+                                <li class="nav-item"><a runat="server" id="LogOut" onserverclick="LogOut_ServerClick" class="nav-link logout"><span class="d-none d-sm-inline-block">Cerrar Sesión</span><i class="fa fa-sign-out"></i></a></li>
                             </ul>
                         </div>
                     </div>

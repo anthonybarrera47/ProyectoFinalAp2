@@ -31,7 +31,7 @@ namespace ProyectoFinalAp2Test
             {
                 UsuarioId = 1,
                 Nombre = "Anthony Manuel Barrera",
-                Password = Utils.SHA1("1234"),
+                Password = RepositorioUsuarios.SHA1("1234"),
                 UserName = "root",
                 TipoUsuario = TipoUsuario.UsuarioNormal,
                 Fecha = DateTime.Now
@@ -48,8 +48,8 @@ namespace ProyectoFinalAp2Test
         [TestMethod]
         public void Eliminar()
         {
-            RepositorioBase<Usuarios> repositorio = new RepositorioBase<Usuarios>();
-            Assert.IsTrue(repositorio.Eliminar(1));
+            RepositorioUsuarios repositorio = new RepositorioUsuarios();
+            Assert.IsTrue(repositorio.Eliminar(3));
         }
 
     }

@@ -21,6 +21,7 @@ namespace ProyectoFinalAp2Test
                 Direccion = "Las Guaranas",
                 Telefono = "829-935-9510",
                 UsuarioId =1,
+                EmpresaId= 1,
                 Fecha = DateTime.Now
             };
             RepositorioBase<Factoria> repositorio = new RepositorioBase<Factoria>();
@@ -31,11 +32,12 @@ namespace ProyectoFinalAp2Test
         {
             Factoria factoria = new Factoria
             {
-                FactoriaId = 3,
+                FactoriaId = 1,
                 Nombre = "Anthony Manuel Barrera",
                 Direccion = "Las Guaranas",
                 Telefono = "829-935-9510",
                 UsuarioId = 1,
+                EmpresaId = 1,
                 Fecha = DateTime.Now
             };
             RepositorioBase<Factoria> repositorio = new RepositorioBase<Factoria>();
@@ -45,13 +47,13 @@ namespace ProyectoFinalAp2Test
         public void Buscar()
         {
             RepositorioBase<Factoria> repositorio = new RepositorioBase<Factoria>();
-            Assert.IsTrue(repositorio.Buscar(3) != null);
+            Assert.IsTrue(repositorio.Buscar(1) != null);
         }
         [TestMethod]
         public void Eliminar()
         {
             RepositorioBase<Factoria> repositorio = new RepositorioBase<Factoria>();
-            Assert.IsTrue(repositorio.Eliminar(3));
+            Assert.IsTrue(repositorio.Eliminar(1));
         }
     }
 }

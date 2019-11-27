@@ -2016,7 +2016,6 @@
     <Content Include="Design\js\front.js" />
     <Content Include="Design\js\grasp_mobile_progress_circle-1.0.0.min.js" />
     <Content Include="Design\js\main.js" />
-    <Content Include="Design\vendor\animate\animate.css" />
     <Content Include="Design\vendor\bootstrap\css\bootstrap-grid.css" />
     <Content Include="Design\vendor\bootstrap\css\bootstrap-grid.min.css" />
     <Content Include="Design\vendor\bootstrap\css\bootstrap-reboot.css" />
@@ -2174,8 +2173,6 @@
     <Content Include="Design\vendor\malihu-custom-scrollbar-plugin\jquery.mCustomScrollbar.css" />
     <Content Include="Design\vendor\malihu-custom-scrollbar-plugin\jquery.mCustomScrollbar.js" />
     <Content Include="Design\vendor\malihu-custom-scrollbar-plugin\mCSB_buttons.png" />
-    <Content Include="Design\vendor\perfect-scrollbar\perfect-scrollbar.css" />
-    <Content Include="Design\vendor\perfect-scrollbar\perfect-scrollbar.min.js" />
     <Content Include="Design\vendor\popper.js\esm\popper-utils.js" />
     <Content Include="Design\vendor\popper.js\esm\popper-utils.min.js" />
     <Content Include="Design\vendor\popper.js\esm\popper.js" />
@@ -2188,10 +2185,6 @@
     <Content Include="Design\vendor\popper.js\umd\popper-utils.min.js" />
     <Content Include="Design\vendor\popper.js\umd\popper.js" />
     <Content Include="Design\vendor\popper.js\umd\popper.min.js" />
-    <Content Include="Design\vendor\select2\select2.css" />
-    <Content Include="Design\vendor\select2\select2.js" />
-    <Content Include="Design\vendor\select2\select2.min.css" />
-    <Content Include="Design\vendor\select2\select2.min.js" />
     <Content Include="Global.asax" />
     <Content Include="Login.aspx" />
     <Content Include="Resources\avatar-default.png" />
@@ -2491,6 +2484,7 @@
     <Folder Include="Design\vendor\font-awesome\less\" />
     <Folder Include="Design\vendor\font-awesome\scss\" />
     <Folder Include="Models\" />
+    <Folder Include="UI\Reportes\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="BLL\BLL.csproj">

@@ -20,6 +20,7 @@ namespace ProyectoFinalAp2Test
                 Descripcion = "Yocaju",
                 Kilos = 0,
                 UsuarioId = 1,
+                EmpresaId = 1,
                 Fecha = DateTime.Now
             };
             RepositorioBase<TipoArroz> repositorio = new RepositorioBase<TipoArroz>();
@@ -34,6 +35,7 @@ namespace ProyectoFinalAp2Test
                 Descripcion = "Yocaju",
                 Kilos = 0,
                 UsuarioId = 1,
+                EmpresaId = 1,
                 Fecha = DateTime.Now
             };
             RepositorioBase<TipoArroz> repositorio = new RepositorioBase<TipoArroz>();
