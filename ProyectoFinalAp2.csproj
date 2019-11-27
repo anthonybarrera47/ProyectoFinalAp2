@@ -2467,6 +2467,9 @@
     <Content Include="Design\fontawesome\webfonts\fa-solid-900.woff2" />
     <None Include="packages.config" />
     <Content Include="Site.Master" />
+    <None Include="Properties\PublishProfiles\ApAgroSoft - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\ApAgroSoft - ReadOnly - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\ApAgroSoft - Web Deploy.pubxml" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
