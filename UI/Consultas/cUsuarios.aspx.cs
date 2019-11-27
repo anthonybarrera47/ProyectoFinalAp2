@@ -1,12 +1,8 @@
 ﻿using BLL;
-using ClosedXML.Excel;
 using Entidades;
 using Extensores;
-using Herramientas;
 using System;
 using System.Collections.Generic;
-using System.Data;
-using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Web;
@@ -15,18 +11,23 @@ using System.Web.UI.WebControls;
 
 namespace ProyectoFinalAp2.UI.Consultas
 {
-    public partial class cFactorias : System.Web.UI.Page
+    public partial class cUsuarios : System.Web.UI.Page
     {
-        readonly string KeyViewState = "Factorias";
-        static List<Factoria> lista = new List<Factoria>(); 
+
+        static List<Usuarios> lista = new List<Usuarios>();
         Empresas Empresa = new Empresas();
+        Usuarios Usuario = new Usuarios();
         protected void Page_Load(object sender, EventArgs e)
         {
-            
             Empresa = (Session["Empresas"] as Entidades.Empresas);
+            Usuario = (Session["Usuario"] as Entidades.Usuarios);
+            if (!RepositorioUsuarios.UsuarioEsAdministrador(Usuario))
+            {
+                Response.Redirect("~/default.aspx");
+                return;
+            }
             if (!Page.IsPostBack)
             {
-                ViewState[KeyViewState] = new List<Factoria>();
                 FechaDesdeTextBox.Text = DateTime.Now.ToFormatDate();
                 FechaHastaTextBox.Text = DateTime.Now.ToFormatDate();
             }
@@ -41,15 +42,15 @@ namespace ProyectoFinalAp2.UI.Consultas
 
         protected void BuscarButton_Click(object sender, EventArgs e)
         {
-            Expression<Func<Factoria, bool>> filtro = x => true;
-            RepositorioBase<Factoria> repositorio = new RepositorioBase<Factoria>();
+            Expression<Func<Usuarios, bool>> filtro = x => true;
+            RepositorioUsuarios repositorio = new RepositorioUsuarios();
             switch (BuscarPorDropDownList.SelectedIndex)
             {
                 case 0:
                     filtro = x => true;
                     break;
                 case 1:
-                    filtro = x => x.Nombre.Contains(CriterioTextBox.Text);
+                    filtro = x => x.UserName.Contains(CriterioTextBox.Text);
                     break;
             }
             DateTime fechaDesde = FechaDesdeTextBox.Text.ToDatetime();
@@ -60,34 +61,13 @@ namespace ProyectoFinalAp2.UI.Consultas
             else
                 lista = repositorio.GetList(filtro);
             repositorio.Dispose();
-            this.BindGrid(lista.Where(x=>x.EmpresaId==Empresa.EmpresaID).ToList());
+            this.BindGrid(lista.Where(x => x.Empresa == Empresa.EmpresaID).ToList());
         }
-        private void BindGrid(List<Factoria> lista)
+        private void BindGrid(List<Usuarios> lista)
         {
             DatosGridView.DataSource = null;
             DatosGridView.DataSource = lista;
-            ViewState[KeyViewState] = lista;
             DatosGridView.DataBind();
-        }
-
-        protected void ExportarButton_Click(object sender, EventArgs e)
-        {
-            List<Factoria> lista = ((List<Factoria>)ViewState[KeyViewState]);
-
-            DataTable dt = Utils.ToDataTable<Factoria>(lista);
-            XLWorkbook workbook = new XLWorkbook();
-            workbook.AddWorksheet(dt);
-            Response.Clear();
-            Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-            Response.AddHeader("content-disposition", "attachment;filename=\"ListadoFactorias.xlsx\"");
-
-            using (var memoryStream = new MemoryStream())
-            {
-                workbook.SaveAs(memoryStream);
-                memoryStream.WriteTo(Response.OutputStream);
-            }
-            Response.End();
-            workbook.Dispose();
         }
     }
 }

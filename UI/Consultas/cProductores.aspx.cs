@@ -1,8 +1,12 @@
 ﻿using BLL;
+using ClosedXML.Excel;
 using Entidades;
 using Extensores;
+using Herramientas;
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Web;
@@ -13,6 +17,7 @@ namespace ProyectoFinalAp2.UI.Consultas
 {
     public partial class cProductores : System.Web.UI.Page
     {
+        readonly string KeyViewState = "Productores";
         static List<Productores> lista = new List<Productores>();
         Empresas Empresa = new Empresas();
         protected void Page_Load(object sender, EventArgs e)
@@ -20,6 +25,7 @@ namespace ProyectoFinalAp2.UI.Consultas
             Empresa = (Session["Empresas"] as Entidades.Empresas);
             if (!Page.IsPostBack)
             {
+                ViewState[KeyViewState] = new List<Productores>();
                 FechaDesdeTextBox.Text = DateTime.Now.ToFormatDate();
                 FechaHastaTextBox.Text = DateTime.Now.ToFormatDate();
             }
@@ -48,7 +54,7 @@ namespace ProyectoFinalAp2.UI.Consultas
             else
                 lista = repositorio.GetList(filtro).ToList();
             repositorio.Dispose();
-            this.BindGrid(lista.Where(x=>x.EmpresaId==Empresa.EmpresaID).ToList());
+            this.BindGrid(lista.Where(x => x.EmpresaId == Empresa.EmpresaID).ToList());
         }
         protected void DatosGridView_PageIndexChanging(object sender, GridViewPageEventArgs e)
         {
@@ -60,7 +66,29 @@ namespace ProyectoFinalAp2.UI.Consultas
         {
             DatosGridView.DataSource = null;
             DatosGridView.DataSource = lista;
+            ViewState[KeyViewState] = lista;
             DatosGridView.DataBind();
+        }
+
+        protected void ExportarButton_Click(object sender, EventArgs e)
+        {
+
+            List<Productores> lista = ((List<Productores>)ViewState[KeyViewState]);
+
+            DataTable dt = Utils.ToDataTable<Productores>(lista);
+            XLWorkbook workbook = new XLWorkbook();
+            workbook.AddWorksheet(dt);
+            Response.Clear();
+            Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+            Response.AddHeader("content-disposition", "attachment;filename=\"ListadoProductores.xlsx\"");
+
+            using (var memoryStream = new MemoryStream())
+            {
+                workbook.SaveAs(memoryStream);
+                memoryStream.WriteTo(Response.OutputStream);
+            }
+            Response.End();
+            workbook.Dispose();
         }
     }
 }

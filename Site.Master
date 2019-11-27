@@ -83,7 +83,7 @@
                 cancelButtonText: 'No, cancel!',
                 reverseButtons: true
             }).then((result) => {
-                 
+
                 if (result.value) {
                     swalWithBootstrapButtons.fire(
                         'Deleted!',
@@ -110,7 +110,6 @@
 <body runat="server">
 
     <form id="form1" runat="server">
-        <asp:HiddenField ID="HField" runat="server" Value=""  />
         <nav class="side-navbar">
             <div class="side-navbar-wrapper">
                 <!-- Sidebar Header-->
@@ -134,44 +133,46 @@
                         <li>
                             <a href="#RegistrosDropDown" aria-expanded="false" data-toggle="collapse"><i class="icon-interface-windows"></i>Registros </a>
                             <ul id="RegistrosDropDown" runat="server" class="collapse list-unstyled ">
-                                <li><a href="/UI/Registros/rProductores.aspx">Productores</a></li>
-                                <li><a href="/UI/Registros/rFactoria.aspx">Factorias</a></li>
-                                <li><a href="/UI/Registros/rTipoArroz.aspx">Tipo de arroz</a></li>
-                                <li><a href="/UI/Registros/rPesadas.aspx">Pesadas</a></li>
+                                <li><a href="/UI/Registros/rProductores.aspx"><i class="far fa-user"></i>Productores</a></li>
+                                <li><a href="/UI/Registros/rFactoria.aspx"><i class="fas fa-industry"></i>Factorias</a></li>
+                                <li><a href="/UI/Registros/rTipoArroz.aspx"><i class="fas fa-tree"></i>Tipo de arroz</a></li>
+                                <li><a href="/UI/Registros/rPesadas.aspx"><i class="fas fa-weight-hanging"></i>Pesadas</a></li>
                             </ul>
                         </li>
                         <li>
                             <a href="#ConsultaDropDown" aria-expanded="false" data-toggle="collapse"><i class="fa fa-bar-chart"></i>Consultas</a>
                             <ul id="ConsultaDropDown" class="collapse list-unstyled ">
-                                <li><a href="/UI/Consultas/cProductores.aspx">Productores</a></li>
-                                <li><a href="/UI/Consultas/cFactorias.aspx">Factorias</a></li>
-                                <li><a href="/UI/Consultas/cTipoArroz.aspx">Tipo de arroz</a></li>
-                                <li><a href="/UI/Consultas/cPesadas.aspx">Pesadas</a></li>
+                                <li><a href="/UI/Consultas/cProductores.aspx"><i class="far fa-user"></i>Productores</a></li>
+                                <li><a href="/UI/Consultas/cFactorias.aspx"><i class="fas fa-industry"></i>Factorias</a></li>
+                                <li><a href="/UI/Consultas/cTipoArroz.aspx"><i class="fas fa-tree"></i>Tipo de arroz</a></li>
+                                <li><a href="/UI/Consultas/cPesadas.aspx"><i class="fas fa-weight-hanging"></i>Pesadas</a></li>
                             </ul>
-                        </li>
-                        <li>
-                            <a href="#exampledropdownDropdown" aria-expanded="false" data-toggle="collapse"><i class="icon-interface-windows"></i>Usuarios </a>
-                            <ul id="exampledropdownDropdown" class="collapse list-unstyled ">
-                                <li><a href="/UI/Registros/rUsuarios.aspx">Registro de usuarios</a></li>
-                                <li><a href="#">Consulta de Usuarios</a></li>
-                                <li><a href="/UI/Consultas/cConsultaSolicitudes.aspx">Ver Solicitudes</a></li>
-                            </ul>
-                        </li>
-                        <li>
-                            <a href="#"><i class="icon-mail"></i>Demo<div class="badge badge-warning">6 New</div>
-                            </a>
-
                         </li>
                     </ul>
                 </div>
-                <div class="admin-menu">
-                    <h5 class="sidenav-heading">Second menu</h5>
+                <% 
+                    Entidades.Usuarios usuarios = new Entidades.Usuarios();
+                    if (Page.Session["Usuario"] != null)
+                    {
+                        usuarios = ((Entidades.Usuarios)Page.Session["Usuario"]);
+                        bool paso = BLL.RepositorioUsuarios.UsuarioEsAdministrador(usuarios);
+                        if (paso)
+                            ModuloUsuarios.Visible = true;
+                        else if (!paso)
+                            ModuloUsuarios.Visible = false;
+                    };
+                %>
+                <div id="ModuloUsuarios" runat="server" class="admin-menu">
+                    <h5 class="sidenav-heading">Panel Administrativo</h5>
                     <ul id="side-admin-menu" class="side-menu list-unstyled">
-                        <li><a href="#"><i class="icon-screen"></i>Demo</a></li>
-                        <li><a href="#"><i class="icon-flask"></i>Demo
-               
-                            <div class="badge badge-info">Special</div>
-                        </a></li>
+                        <li>
+                            <a href="#exampledropdownDropdown" aria-expanded="false" data-toggle="collapse"><i class="icon-interface-windows"></i>Usuarios </a>
+                            <ul id="exampledropdownDropdown" class="collapse list-unstyled ">
+                                <li><a href="/UI/Registros/rUsuarios.aspx"><i class="fas fa-users"></i>Registro de usuarios</a></li>
+                                <li><a href="/UI/Consultas/cUsuarios.aspx"><i class="fas fa-users"></i>Consulta de Usuarios</a></li>
+                                <li><a href="/UI/Consultas/cConsultaSolicitudes.aspx"><i class="icon-mail"></i>Ver Solicitudes</a></li>
+                            </ul>
+                        </li>
                     </ul>
                 </div>
             </div>

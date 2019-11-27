@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Net.Mail;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -76,6 +77,7 @@ namespace ProyectoFinalAp2.UI.Consultas
         }
         protected void AprobarButton_Click(object sender, EventArgs e)
         {
+            RepositorioUsuarios repositorioUsuarios = new RepositorioUsuarios();
             RepositorioSolicitudes repositorio = new RepositorioSolicitudes();
             List<SolicitudUsuarios> ListaSolicitu = (ViewState[KeyViewState] as List<SolicitudUsuarios>);
             GridViewRow row = (sender as LinkButton).NamingContainer as GridViewRow;
@@ -92,6 +94,8 @@ namespace ProyectoFinalAp2.UI.Consultas
                 {
                     solicitud.Estado = EstadoSolicitud.Autorizado;
                     paso = repositorio.Modificar(solicitud);
+                    if (paso)
+                        Mensaje(repositorioUsuarios.Buscar(solicitud.UsuarioId).Correo, Empresa.NombreEmpresa, TiposMensajes.SolicitudAceptada);
                 }
                 if (paso)
                 {
@@ -103,12 +107,11 @@ namespace ProyectoFinalAp2.UI.Consultas
             }
             else
                 Utils.ToastSweet(this, IconType.error, TiposMensajes.YaFueDenegadaOAprobada);
-
         }
-
         protected void DenegarButton_Click(object sender, EventArgs e)
         {
             RepositorioSolicitudes repositorio = new RepositorioSolicitudes();
+            RepositorioUsuarios repositorioUsuarios = new RepositorioUsuarios();
             List<SolicitudUsuarios> ListaSolicitu = (ViewState[KeyViewState] as List<SolicitudUsuarios>);
             GridViewRow row = (sender as LinkButton).NamingContainer as GridViewRow;
             SolicitudUsuarios solicitud = ListaSolicitu.ElementAt(row.RowIndex);
@@ -124,6 +127,8 @@ namespace ProyectoFinalAp2.UI.Consultas
                 {
                     solicitud.Estado = EstadoSolicitud.Denegado;
                     paso = repositorio.Modificar(solicitud);
+                    if (paso)
+                        Mensaje(repositorioUsuarios.Buscar(solicitud.UsuarioId).Correo, Empresa.NombreEmpresa, TiposMensajes.SolicitudDenegada);
                 }
                 if (paso)
                 {
@@ -135,6 +140,33 @@ namespace ProyectoFinalAp2.UI.Consultas
             }
             else
                 Utils.ToastSweet(this, IconType.error, TiposMensajes.YaFueDenegadaOAprobada);
+        }
+        public static void Mensaje(string correo, string NombreEmpresa, TiposMensajes tipos)
+        {
+            try
+            {
+                MailMessage mail = new MailMessage();
+                SmtpClient SmtpServer = new SmtpClient("smtp.gmail.com");
+                mail.From = new MailAddress("proyectoaplicada2@gmail.com");
+                mail.To.Add(correo);
+                mail.Subject = NombreEmpresa;
+                mail.Body = "Su " + tipos.GetDescription();
+                SmtpServer.Port = 587;
+                SmtpServer.Credentials = new System.Net.NetworkCredential("proyectoaplicada2@gmail.com", "@P123456");
+                SmtpServer.EnableSsl = true;
+                SmtpServer.Send(mail);
+
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+        }
+        public static int GetCantidadSolicitudes()
+        {
+            RepositorioSolicitudes repositorio = new RepositorioSolicitudes();
+            return repositorio.GetList(x => x.Estado == EstadoSolicitud.Pendiente).Count();
         }
     }
 }

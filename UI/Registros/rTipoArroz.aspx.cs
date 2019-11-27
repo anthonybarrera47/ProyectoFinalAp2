@@ -22,7 +22,6 @@ namespace ProyectoFinalAp2.UI.Registros
             Usuario = (Session["Usuario"] as Entidades.Usuarios);
             if (!Page.IsPostBack)
             {
-                Limpiar();
                 FechaTextBox.Text = DateTime.Now.ToFormatDate();
                 int id = Request.QueryString["TipoArrozId"].ToInt();
                 if (id > 0)
@@ -36,7 +35,6 @@ namespace ProyectoFinalAp2.UI.Registros
                 }
             }
         }
-
         private void Limpiar()
         {
             TipoArrozIdTxt.Text = "0";

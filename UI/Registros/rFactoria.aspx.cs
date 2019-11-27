@@ -14,12 +14,19 @@ namespace ProyectoFinalAp2.UI.Registros
 {
     public partial class rFactoria : System.Web.UI.Page
     {
+        
         Empresas Empresa = new Empresas();
         Usuarios Usuario = new Usuarios();
+
         protected void Page_Load(object sender, EventArgs e)
         {
             Empresa = (Session["Empresas"] as Entidades.Empresas);
             Usuario = (Session["Usuario"] as Entidades.Usuarios);
+            if (!RepositorioUsuarios.UsuarioEsAdministrador(Usuario))
+            {
+                Response.Redirect("~/default.aspx");
+                return;
+            }
             if (!Page.IsPostBack)
             {
                 Limpiar();

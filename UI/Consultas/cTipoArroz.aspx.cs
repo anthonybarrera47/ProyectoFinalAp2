@@ -1,8 +1,13 @@
 ﻿using BLL;
+using ClosedXML.Excel;
+using ClosedXML.Extensions;
 using Entidades;
 using Extensores;
+using Herramientas;
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Web;
@@ -13,6 +18,7 @@ namespace ProyectoFinalAp2.UI.Consultas
 {
     public partial class cTipoArroz : System.Web.UI.Page
     {
+        readonly string KeyViewState = "Factorias";
         static List<TipoArroz> lista = new List<TipoArroz>();
         Empresas Empresa = new Empresas();
         protected void Page_Load(object sender, EventArgs e)
@@ -20,6 +26,7 @@ namespace ProyectoFinalAp2.UI.Consultas
             Empresa = (Session["Empresas"] as Entidades.Empresas);
             if (!Page.IsPostBack)
             {
+                ViewState[KeyViewState] = new List<TipoArroz>();
                 FechaDesdeTextBox.Text = DateTime.Now.ToFormatDate();
                 FechaHastaTextBox.Text = DateTime.Now.ToFormatDate();
             }
@@ -51,6 +58,7 @@ namespace ProyectoFinalAp2.UI.Consultas
         {
             DatosGridView.DataSource = null;
             DatosGridView.DataSource = lista;
+            ViewState[KeyViewState] = lista;
             DatosGridView.DataBind();
         }
         protected void ImprimirButton_Click(object sender, EventArgs e)
@@ -76,7 +84,22 @@ namespace ProyectoFinalAp2.UI.Consultas
 
         protected void ExportarButton_Click(object sender, EventArgs e)
         {
-
+            List<TipoArroz> lista = ((List<TipoArroz>)ViewState[KeyViewState] );
+            
+            DataTable dt = Utils.ToDataTable<TipoArroz>(lista);
+            XLWorkbook workbook = new XLWorkbook();
+            workbook.AddWorksheet(dt);
+            Response.Clear();
+            Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+            Response.AddHeader("content-disposition", "attachment;filename=\"ListadoTipoArroz.xlsx\"");
+            
+            using (var memoryStream = new MemoryStream())
+            {
+                workbook.SaveAs(memoryStream);
+                memoryStream.WriteTo(Response.OutputStream);
+            }
+            Response.End();
+            workbook.Dispose();
         }
     }
 }

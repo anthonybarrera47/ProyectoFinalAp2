@@ -148,6 +148,21 @@
                                                         ErrorMessage="Esta empresa no existe" CssClass="bg-danger text-white" Display="Dynamic" ValidationGroup="GuardarComoUsuario" />
                                                 </div>
                                                 <div class="row">
+                                                    <%--Email--%>
+                                                    <div class="col-12 col-md-5">
+                                                        <div class="form-group">
+                                                            <label for="EmailTxtComousuario">Email</label>
+                                                            <asp:TextBox TextMode="Email" runat="server" ID="EmailTxtComousuario" placeholder="El correo debe ser Gmail." CssClass="form-control "></asp:TextBox>
+                                                        </div>
+                                                        <asp:RequiredFieldValidator ID="RFVEmail" runat="server"
+                                                            ControlToValidate="EmailTxtComousuario" ValidationGroup="GuardarComoUsuario"
+                                                            Display="Dynamic" SetFocusOnError="true"
+                                                            ForeColor="Red" ToolTip="Campo Descripcion Obligatorio"
+                                                            ErrorMessage="Este campo no puede estar vacio">
+                                                        </asp:RequiredFieldValidator>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
                                                     <%--Password--%>
                                                     <div class="col-12 col-md-5">
                                                         <div class="form-group">
@@ -194,7 +209,7 @@
                                                             <asp:TextBox runat="server" ID="UserNameComoEmpresa" placeholder="Nombre de usuario" CssClass="form-control "></asp:TextBox>
                                                         </div>
                                                     </div>
-                                                    <%--CodigoEmpresa--%>
+                                                    <%--NombreEmpresa--%>
                                                     <div class="col-12 col-md-5">
                                                         <div class="form-group">
                                                             <label for="NombreEmpresaTxt">Nombre de la empresa</label>
@@ -203,25 +218,44 @@
                                                     </div>
                                                 </div>
                                                 <div class="row">
+                                                    <%--Email--%>
+                                                    <div class="col-12 col-md-5">
+                                                        <div class="form-group">
+                                                            <label for="EmailComoEmpresatxt">Email</label>
+                                                            <asp:TextBox TextMode="Email" runat="server" ID="EmailComoEmpresatxt" placeholder="El correo debe ser Gmail." CssClass="form-control "></asp:TextBox>
+                                                        </div>
+                                                        <asp:RequiredFieldValidator ID="RFVEmailComoEmpres" runat="server"
+                                                            ControlToValidate="EmailComoEmpresatxt" ValidationGroup="GuardarComoEmpresaButton"
+                                                            Display="Dynamic" SetFocusOnError="true"
+                                                            ForeColor="Red" ToolTip="Campo Descripcion Obligatorio"
+                                                            ErrorMessage="Este campo no puede estar vacio">
+                                                        </asp:RequiredFieldValidator>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
                                                     <%--Password--%>
                                                     <div class="col-12 col-md-5">
                                                         <div class="form-group">
-                                                            <label for="ClaveTxt">Contrase&ntilde;a</label>
+                                                            <label for="PasswordComoEmpresa">Contrase&ntilde;a</label>
                                                             <asp:TextBox runat="server" ID="PasswordComoEmpresa" TextMode="Password" placeholder="Clave" CssClass="form-control"></asp:TextBox>
                                                         </div>
                                                     </div>
                                                     <%--ConfirmarPassword--%>
                                                     <div class="col-12 col-md-5">
                                                         <div class="form-group">
-                                                            <label for="ConfClaveTxt">Confirmar Contrase&ntilde;a</label>
+                                                            <label for="ConfPasswordComoEmpresa">Confirmar Contrase&ntilde;a</label>
                                                             <asp:TextBox runat="server" ID="ConfPasswordComoEmpresa" TextMode="Password" placeholder="Confirmar clave" CssClass="form-control"></asp:TextBox>
                                                         </div>
                                                     </div>
+                                                    <asp:CompareValidator runat="server" ID="CompareValidator1"
+                                                        ErrorMessage="Contrase&ntilde;a no Coinciden" ControlToValidate="PasswordComoEmpresa" ControlToCompare="ConfPasswordComoEmpresa"
+                                                        CssClass="bg-danger text-white" Display="Dynamic" Type="String" Operator="Equal" ValidationGroup="GuardarComoEmpresaButton">
+                                                    </asp:CompareValidator>
                                                 </div>
                                             </div>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                                                <asp:Button ID="GuardarComoEmpresaButton" OnClick="GuardarComoEmpresaButton_Click" CssClass="btn btn-success" Text="Guardar" runat="server" data-dismiss="modal" UseSubmitBehavior="false" />
+                                                <asp:Button ID="GuardarComoEmpresaButton" ValidationGroup="GuardarComoEmpresaButton" OnClick="GuardarComoEmpresaButton_Click" CssClass="btn btn-success" Text="Guardar" runat="server" data-dismiss="modal" UseSubmitBehavior="false" />
                                             </div>
                                         </div>
                                     </div>

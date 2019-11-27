@@ -102,14 +102,6 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="card-footer">
-                            <div class="text-left">
-                                <div class="form-group" display: inline-block>
-                                    <asp:Button Text="Imprimir" CssClass="btn btn-outline-info btn-lg" runat="server" ID="ImprimirButton" />
-                                    <asp:Button Text="Exportar" CssClass="btn btn-outline-primary btn-lg" runat="server" ID="ExportarButton" />
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>

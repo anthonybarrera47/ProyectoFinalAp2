@@ -1,8 +1,12 @@
 ﻿using BLL;
+using ClosedXML.Excel;
 using Entidades;
 using Extensores;
+using Herramientas;
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Web;
@@ -13,6 +17,8 @@ namespace ProyectoFinalAp2.UI.Consultas
 {
     public partial class cPesadas : System.Web.UI.Page
     {
+
+        readonly string KeyViewState = "Factorias";
         static List<Pesadas> lista = new List<Pesadas>();
         Empresas Empresa = new Empresas();
         protected void Page_Load(object sender, EventArgs e)
@@ -20,6 +26,7 @@ namespace ProyectoFinalAp2.UI.Consultas
             Empresa = (Session["Empresas"] as Entidades.Empresas);
             if (!Page.IsPostBack)
             {
+                ViewState[KeyViewState] = new List<Pesadas>();
                 FechaDesdeTextBox.Text = DateTime.Now.ToFormatDate();
                 FechaHastaTextBox.Text = DateTime.Now.ToFormatDate();
             }
@@ -56,7 +63,28 @@ namespace ProyectoFinalAp2.UI.Consultas
         {
             DatosGridView.DataSource = null;
             DatosGridView.DataSource = lista;
+            ViewState[KeyViewState] = lista;
             DatosGridView.DataBind();
+        }
+
+        protected void ExportarButton_Click(object sender, EventArgs e)
+        {
+            List<Factoria> lista = ((List<Factoria>)ViewState[KeyViewState]);
+
+            DataTable dt = Utils.ToDataTable<Factoria>(lista);
+            XLWorkbook workbook = new XLWorkbook();
+            workbook.AddWorksheet(dt);
+            Response.Clear();
+            Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+            Response.AddHeader("content-disposition", "attachment;filename=\"ListadoPesadas.xlsx\"");
+
+            using (var memoryStream = new MemoryStream())
+            {
+                workbook.SaveAs(memoryStream);
+                memoryStream.WriteTo(Response.OutputStream);
+            }
+            Response.End();
+            workbook.Dispose();
         }
     }
 }

@@ -78,6 +78,24 @@ namespace ProyectoFinalAp2
         protected global::System.Web.UI.WebControls.CustomValidator CustomCodigoValidate;
 
         /// <summary>
+        /// EmailTxtComousuario control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox EmailTxtComousuario;
+
+        /// <summary>
+        /// RFVEmail control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator RFVEmail;
+
+        /// <summary>
         /// ClaveTxt control.
         /// </summary>
         /// <remarks>
@@ -132,6 +150,24 @@ namespace ProyectoFinalAp2
         protected global::System.Web.UI.WebControls.TextBox NombreEmpresaTxt;
 
         /// <summary>
+        /// EmailComoEmpresatxt control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox EmailComoEmpresatxt;
+
+        /// <summary>
+        /// RFVEmailComoEmpres control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator RFVEmailComoEmpres;
+
+        /// <summary>
         /// PasswordComoEmpresa control.
         /// </summary>
         /// <remarks>
@@ -148,6 +184,15 @@ namespace ProyectoFinalAp2
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox ConfPasswordComoEmpresa;
+
+        /// <summary>
+        /// CompareValidator1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CompareValidator CompareValidator1;
 
         /// <summary>
         /// GuardarComoEmpresaButton control.

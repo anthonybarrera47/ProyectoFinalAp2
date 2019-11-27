@@ -101,7 +101,7 @@
                             <div class="text-left">
                                 <div class="form-group" display: inline-block>
                                     <asp:Button Text="Imprimir" CssClass="btn btn-outline-info btn-lg" runat="server" ID="ImprimirButton" />
-                                    <asp:Button Text="Exportar" CssClass="btn btn-outline-primary btn-lg" runat="server" ID="ExportarButton" />
+                                    <asp:Button Text="Exportar" CssClass="btn btn-outline-primary btn-lg" runat="server" ID="ExportarButton" OnClick="ExportarButton_Click" />
                                 </div>
                             </div>
                         </div>
@@ -112,6 +112,7 @@
         <Triggers>
             <asp:AsyncPostBackTrigger ControlID="DatosGridView" />
             <asp:AsyncPostBackTrigger ControlID="BuscarButton" />
+            <asp:PostBackTrigger ControlID="ExportarButton" /> 
         </Triggers>
     </asp:UpdatePanel>
 </asp:Content>

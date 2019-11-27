@@ -14,110 +14,82 @@ namespace ProyectoFinalAp2.UI.Registros
 {
     public partial class rUsuarios : System.Web.UI.Page
     {
+        Empresas Empresa = new Empresas();
+        Usuarios Usuario = new Usuarios();
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (!Page.IsPostBack)
+            Empresa = (Session["Empresas"] as Entidades.Empresas);
+            Usuario = (Session["Usuario"] as Entidades.Usuarios);
+            if (!RepositorioUsuarios.UsuarioEsAdministrador(Usuario))
             {
-                Limpiar();
-                FechaTextBox.Text = DateTime.Now.ToFormatDate();
-                int id = Request.QueryString["UsuarioId"].ToInt();
-                if (id > 0 || !ExisteEnLaBaseDeDatos())
-                {
-
-                }
-            }
-        }
-
-        private void Limpiar()
-        {
-            
-        }
-
-        protected void NuevoButton_Click(object sender, EventArgs e)
-        {
-            UsuarioIdTxt.Text = "0";
-            UserNameTxt.Text = string.Empty;
-            FechaTextBox.Text = DateTime.Now.ToFormatDate();
-            ClaveTxt.Text = string.Empty;
-        }
-
-        protected void GuadarButton_Click(object sender, EventArgs e)
-        {
-            bool paso = false;
-            RepositorioBase<Usuarios> repositorio = new RepositorioBase<Usuarios>();
-            Usuarios usuarios = LLenaClase();
-            TipoTitulo tipoTitulo = TipoTitulo.OperacionFallida;
-            TiposMensajes tiposMensajes = TiposMensajes.RegistroNoGuardado;
-            IconType iconType = IconType.error;
-            if (!RepositorioUsuarios.ValidarUsuario(usuarios))
-            {
-                Utils.Alerta(this, TipoTitulo.OperacionFallida,TiposMensajes.UsuarioExistente, IconType.error);
+                Response.Redirect("~/default.aspx");
                 return;
             }
-            if (usuarios.UsuarioId == 0)
-                paso = repositorio.Guardar(usuarios);
-            else
+            if (!Page.IsPostBack)
             {
-                if (!ExisteEnLaBaseDeDatos())
+                FechaTextBox.Text = DateTime.Now.ToFormatDate();
+                int id = Request.QueryString["UsuarioId"].ToInt();
+                if (id > 0 && PerteneceALaEmpresa(Usuario.Empresa))
                 {
-                    Utils.ToastSweet(this, IconType.info, TiposMensajes.RegistroNoEncontrado);
-                    return;
+                    RepositorioUsuarios repositorio = new RepositorioUsuarios();
+                    var Usuario = repositorio.Buscar(id);
+                    if (Usuario.EsNulo() || PerteneceALaEmpresa(Usuario.Empresa))
+                        Utils.Alerta(this, TipoTitulo.Informacion, TiposMensajes.RegistroNoEncontrado, IconType.info);
+                    else
+                        LlenarCampos(Usuario);
                 }
-                paso = repositorio.Modificar(usuarios);
             }
-
-            if (paso)
-            {
-                Limpiar();
-                tipoTitulo = TipoTitulo.OperacionExitosa;
-                tiposMensajes = TiposMensajes.RegistroGuardado;
-                iconType = IconType.success;
-            }
-            Utils.Alerta(this, tipoTitulo, tiposMensajes, iconType);
         }
-
         private bool ExisteEnLaBaseDeDatos()
         {
             RepositorioBase<Usuarios> repositorio = new RepositorioBase<Usuarios>();
             Usuarios usuarios = repositorio.Buscar(UsuarioIdTxt.Text.ToInt());
             repositorio.Dispose();
-            return !usuarios.EsNulo();
+            return !usuarios.EsNulo() && PerteneceALaEmpresa(usuarios.Empresa);
         }
-
+        private void LlenarCampos(Usuarios usuarios)
+        {
+            UsuarioIdTxt.Text = usuarios.UsuarioId.ToString();
+            UserNameTxt.Text = usuarios.UserName;
+            FechaTextBox.Text = usuarios.Fecha.ToFormatDate();
+        }
         private Usuarios LLenaClase()
         {
             Usuarios user = new Usuarios();
+            int tipo = -1;
 
             if (UsuarioIdTxt.Text.Equals(string.Empty))
                 UsuarioIdTxt.Text = "0";
             user.UsuarioId = UsuarioIdTxt.Text.ToInt();
             user.UserName = UserNameTxt.Text;
             user.Password = RepositorioUsuarios.SHA1(ClaveTxt.Text);
+            if (Request.Form["TipoUsuario"] != null)
+                tipo = Request.Form["TipoUsuario"].ToInt();
+            user.TipoUsuario = (tipo == 0) ? TipoUsuario.Administrador : TipoUsuario.UsuarioNormal;
             return user;
         }
-
-        protected void EliminarButton_Click(object sender, EventArgs e)
+        private void Limpiar()
         {
-            RepositorioBase<Usuarios> repositorio = new RepositorioBase<Usuarios>();
-            int id = UsuarioIdTxt.Text.ToInt();
-            if (!ExisteEnLaBaseDeDatos())
-            {
-                Utils.Alerta(this, TipoTitulo.OperacionFallida, TiposMensajes.RegistroInexistente, IconType.error);
-                return;
-            }
-            else
-            {
-                if (repositorio.Eliminar(id))
-                {
-                    Utils.Alerta(this, TipoTitulo.OperacionExitosa, TiposMensajes.RegistroEliminado, IconType.success);
-                    Limpiar();
-                }
-            }
-            repositorio.Dispose();
+            UsuarioIdTxt.Text = string.Empty;
+            UserNameTxt.Text = string.Empty;
+            FechaTextBox.Text = DateTime.Now.ToFormatDate();
+            ClaveTxt.Text = string.Empty;
+            ConfClaveTxt.Text = string.Empty;
+            NombreCompletoTxt.Text = string.Empty;
+            DireccionTextBox.Text = string.Empty;
+            EmailTextBox.Text = string.Empty;
+            FechaNacimientoTxt.Text = DateTime.Now.ToFormatDate();
+        }
+
+        public bool PerteneceALaEmpresa(int id)
+        {
+            RepositorioUsuarios repositorio = new RepositorioUsuarios();
+            Usuarios user = repositorio.Buscar(id);
+            return user.Empresa == Empresa.EmpresaID;
         }
         protected void BuscarButton_Click(object sender, EventArgs e)
         {
-            RepositorioBase<Usuarios> repositorio = new RepositorioBase<Usuarios>();
+            RepositorioUsuarios repositorio = new RepositorioUsuarios();
             int Id = UsuarioIdTxt.Text.ToInt();
             if (Id != 0)
             {
@@ -134,11 +106,71 @@ namespace ProyectoFinalAp2.UI.Registros
                 Utils.ToastSweet(this, IconType.info, TiposMensajes.RegistroNoEncontrado);
         }
 
-        private void LlenarCampos(Usuarios usuarios)
+        protected void NuevoButton_Click(object sender, EventArgs e)
         {
-            UsuarioIdTxt.Text = usuarios.UsuarioId.ToString();
-            UserNameTxt.Text = usuarios.UserName;
-            FechaTextBox.Text = usuarios.Fecha.ToFormatDate();
+            Limpiar();
         }
+        protected void GuadarButton_Click(object sender, EventArgs e)
+        {
+            if (Page.IsValid)
+            {
+                bool paso = false;
+                RepositorioUsuarios repositorio = new RepositorioUsuarios();
+                Usuarios usuarios = LLenaClase();
+                TipoTitulo tipoTitulo = TipoTitulo.OperacionFallida;
+                TiposMensajes tiposMensajes = TiposMensajes.RegistroNoGuardado;
+                IconType iconType = IconType.error;
+                if (!RepositorioUsuarios.ValidarUsuario(usuarios))
+                {
+                    Utils.Alerta(this, TipoTitulo.OperacionFallida, TiposMensajes.UsuarioExistente, IconType.error);
+                    return;
+                }
+                if (!RepositorioUsuarios.ValidarCorreo(usuarios))
+                {
+                    Utils.Alerta(this, TipoTitulo.OperacionFallida, TiposMensajes.CorreExistente, IconType.error);
+                    return;
+                }
+                if (usuarios.UsuarioId == 0)
+                    paso = repositorio.Guardar(usuarios);
+                else
+                {
+                    if (!ExisteEnLaBaseDeDatos())
+                    {
+                        Utils.ToastSweet(this, IconType.info, TiposMensajes.RegistroNoEncontrado);
+                        return;
+                    }
+                    paso = repositorio.Modificar(usuarios);
+                }
+
+                if (paso)
+                {
+                    Limpiar();
+                    tipoTitulo = TipoTitulo.OperacionExitosa;
+                    tiposMensajes = TiposMensajes.RegistroGuardado;
+                    iconType = IconType.success;
+                }
+                Utils.Alerta(this, tipoTitulo, tiposMensajes, iconType);
+            }
+        }
+        protected void EliminarButton_Click(object sender, EventArgs e)
+        {
+            RepositorioUsuarios repositorio = new RepositorioUsuarios();
+            int id = UsuarioIdTxt.Text.ToInt();
+            if (!ExisteEnLaBaseDeDatos())
+            {
+                Utils.Alerta(this, TipoTitulo.OperacionFallida, TiposMensajes.RegistroInexistente, IconType.error);
+                return;
+            }
+            else
+            {
+                if (repositorio.Eliminar(id))
+                {
+                    Utils.Alerta(this, TipoTitulo.OperacionExitosa, TiposMensajes.RegistroEliminado, IconType.success);
+                    Limpiar();
+                }
+            }
+            repositorio.Dispose();
+        }
+
     }
 }

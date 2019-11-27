@@ -26,6 +26,7 @@ namespace ProyectoFinalAp2
             if (RepositorioUsuarios.Autenticar(UserNameTextBox.Text, PasswordTextBox.Text))
             {
                 Usuarios usuarios = RepositorioUsuarios.GetUser(UserNameTextBox.Text.EliminarEspaciosEnBlanco());
+                Empresas Empresa = RepositorioUsuarios.GetEmpresas(usuarios.UsuarioId);
                 if (!usuarios.EsPropietarioEmpresa)
                 {
                     RepositorioBase<SolicitudUsuarios> repositorio = new RepositorioBase<SolicitudUsuarios>();
@@ -39,14 +40,14 @@ namespace ProyectoFinalAp2
                     else if (solicitud.Estado == Entidades.EstadoSolicitud.Autorizado)
                     {
                         Session["Usuario"] = usuarios;
-                        Session["Empresas"] = RepositorioUsuarios.GetEmpresas(usuarios.UsuarioId);
+                        Session["Empresas"] = Empresa;
                         FormsAuthentication.RedirectFromLoginPage(usuarios.UserName, true);
                     }
                 }
                 else
                 {
                     Session["Usuario"] = usuarios;
-                    Session["Empresas"] = RepositorioUsuarios.GetEmpresas(usuarios.UsuarioId);
+                    Session["Empresas"] = Empresa;
                     FormsAuthentication.RedirectFromLoginPage(usuarios.UserName, true);
                 }
 
@@ -57,12 +58,18 @@ namespace ProyectoFinalAp2
 
         protected void GuardarComoEmpresaButton_Click(object sender, EventArgs e)
         {
-            Usuarios usuarios = new Usuarios();
-            usuarios.UserName = UserNameComoEmpresa.Text;
-            usuarios.Password = RepositorioUsuarios.SHA1(PasswordComoEmpresa.Text);
-            usuarios.EsPropietarioEmpresa = true;
-            usuarios.TipoUsuario = TipoUsuario.Administrador;
-            GuardarUsuario(usuarios);
+            if (Page.IsValid)
+            {
+                Usuarios usuarios = new Usuarios();
+                usuarios.UserName = UserNameComoEmpresa.Text;
+                usuarios.Correo = EmailComoEmpresatxt.Text.ToString();
+                usuarios.Password = RepositorioUsuarios.SHA1(PasswordComoEmpresa.Text);
+                usuarios.EsPropietarioEmpresa = true;
+                usuarios.TipoUsuario = TipoUsuario.Administrador;
+                GuardarUsuario(usuarios);
+            }
+
+
         }
         private bool ValidarClave()
         {
@@ -86,7 +93,8 @@ namespace ProyectoFinalAp2
                 {
                     UserName = UserNameComoUserTxt.Text,
                     Password = RepositorioUsuarios.SHA1(ClaveTxt.Text),
-                    TipoUsuario = TipoUsuario.Administrador,
+                    TipoUsuario = TipoUsuario.UsuarioNormal,
+                    Correo = EmailTxtComousuario.Text.ToString(),
                     EsPropietarioEmpresa = false,
                     Empresa = CodigoEmpresaTxt.Text.ToInt()
                 };
@@ -105,6 +113,11 @@ namespace ProyectoFinalAp2
                 if (!RepositorioUsuarios.ValidarUsuario(usuarios))
                 {
                     Utils.Alerta(this, Enums.TipoTitulo.OperacionFallida, Enums.TiposMensajes.UsuarioExistente, Enums.IconType.error);
+                    return;
+                }
+                if (!RepositorioUsuarios.ValidarCorreo(usuarios))
+                {
+                    Utils.Alerta(this, Enums.TipoTitulo.OperacionFallida, Enums.TiposMensajes.CorreExistente, Enums.IconType.error);
                     return;
                 }
                 RepositorioUsuarios repositorio = new RepositorioUsuarios();

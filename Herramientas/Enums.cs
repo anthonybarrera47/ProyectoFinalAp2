@@ -50,14 +50,18 @@ namespace Enums
         ComunicarseConAdmi,
         [Description("Solicitud en espera!")]
         SolicitudEspera,
-        [Description("Solicitud Denegada!")]
+        [Description("Solicitud denegada, No puede iniciar Sesion!")]
         SolicitudDenegada,
         [Description("Empresa No Existe, verifique el codigo")]
         EmpresaNoExiste,
         [Description("No tiene solicitudes!")]
         SinSolicitud,
         [Description("Estad solicitud ya fue denegada o aprobada!")]
-        YaFueDenegadaOAprobada
+        YaFueDenegadaOAprobada,
+        [Description("Solicitud Aceptada, ya puede iniciar Sesion!")]
+        SolicitudAceptada,
+        [Description("Correo existente!")]
+        CorreExistente
     }
     public enum TipoTitulo
     {

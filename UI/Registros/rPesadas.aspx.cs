@@ -30,7 +30,7 @@ namespace ProyectoFinalAp2.UI.Registros
                 if (id > 0)
                 {
                     var pesadas = new RepositorioPesadas().Buscar(id);
-                    if (pesadas.EsNulo() || PerteneceALaEmpresa(pesadas.EmpresaId))
+                    if (pesadas.EsNulo() || !PerteneceALaEmpresa(pesadas.EmpresaId))
                         Utils.Alerta(this, TipoTitulo.Informacion, TiposMensajes.RegistroNoEncontrado, IconType.info);
                     else
                     {
@@ -98,7 +98,8 @@ namespace ProyectoFinalAp2.UI.Registros
             pesadas.Fanega = FanegaTextBox.Text.ToDecimal();
             pesadas.TotalPagar = TotalPagarTextBox.Text.ToDecimal();
             pesadas.Fecha = FechaTxt.Text.ToDatetime();
-            pesadas.UsuarioId = 2;
+            pesadas.UsuarioId = Usuario.UsuarioId;
+            pesadas.EmpresaId = Empresa.EmpresaID;
             return pesadas;
         }
         private void Limpiar()
@@ -205,7 +206,8 @@ namespace ProyectoFinalAp2.UI.Registros
         private bool ExisteEnLaBaseDeDatos()
         {
             RepositorioPesadas repositorio = new RepositorioPesadas();
-            return repositorio.ExisteEnLaBaseDeDatos(PesadaIdTxt.Text.ToInt());
+            Pesadas Pesada = repositorio.Buscar(PesadaIdTxt.Text.ToInt());
+            return !repositorio.EsNulo() && PerteneceALaEmpresa(Pesada.EmpresaId);
         }
         protected void EliminarButton_Click(object sender, EventArgs e)
         {
@@ -287,18 +289,6 @@ namespace ProyectoFinalAp2.UI.Registros
             FanegaTextBox.Text = Nega.ToString("N2");
             TotalPagarTextBox.Text = TotalAPagar.ToString("N2");
         }
-        private Pesadas ViewStateToEntity(object obj)
-        {
-            return (obj as Pesadas);
-        }
-        protected void cusCustom_ServerValidate(object source, ServerValidateEventArgs args)
-        {
-            args.IsValid = args.Value.ToDecimal() > 0;
-        }
-        protected void CustomFactoria_ServerValidate(object source, ServerValidateEventArgs args)
-        {
-            args.IsValid = BuscarFactoria();
-        }
         private bool BuscarFactoria()
         {
             RepositorioBase<Factoria> repositorio = new RepositorioBase<Factoria>();
@@ -336,6 +326,18 @@ namespace ProyectoFinalAp2.UI.Registros
             RepositorioPesadas repositorio = new RepositorioPesadas();
             Pesadas Pesadas = repositorio.Buscar(id);
             return Pesadas.EmpresaId == Empresa.EmpresaID;
+        }
+        private Pesadas ViewStateToEntity(object obj)
+        {
+            return (obj as Pesadas);
+        }
+        protected void cusCustom_ServerValidate(object source, ServerValidateEventArgs args)
+        {
+            args.IsValid = args.Value.ToDecimal() > 0;
+        }
+        protected void CustomFactoria_ServerValidate(object source, ServerValidateEventArgs args)
+        {
+            args.IsValid = BuscarFactoria();
         }
     }
 }
