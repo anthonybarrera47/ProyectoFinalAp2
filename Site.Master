@@ -1,0 +1,238 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Site.master.cs" Inherits="ProyectoFinalAp2.Site" %>
+
+<!DOCTYPE html>
+
+<html>
+<head runat="server">
+
+    <title></title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="robots" content="all,follow">
+    <meta name="description" content="">
+    <%--    <link href="Content/bootstrap.min.css" rel="stylesheet">--%>
+    <%-- <script type="text/javascript" src="/Scripts/jquery-3.4.1.min.js"></script>
+    <script type="text/javascript" src="/Scripts/popper.min.js"></script>
+    <script type="text/javascript" src="/Scripts/bootstrap.min.js"></script>--%>
+    <!--Bootstrap CSS-->
+    <link rel="stylesheet" href="Design/vendor/bootstrap/css/bootstrap.min.css">
+    <!-- Font Awesome CSS-->
+    <link rel="stylesheet" href="Design/vendor/font-awesome/css/font-awesome.min.css">
+    <!-- Fontastic Custom icon font-->
+    <link rel="stylesheet" href="Design/css/fontastic.css">
+    <!-- Google fonts - Roboto -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700">
+    <!-- jQuery Circle-->
+    <link rel="stylesheet" href="Design/css/grasp_mobile_progress_circle-1.0.0.min.css">
+    <!-- Custom Scrollbar-->
+    <link rel="stylesheet" href="Design/vendor/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.css">
+    <!-- theme stylesheet-->
+    <link rel="stylesheet" href="Design/css/style.default.css" id="themestylesheet">
+    <!-- Custom stylesheet - for your changes-->
+    <link rel="stylesheet" href="Design/css/custom.css">
+    <!-- Favicon-->
+    <link rel="shortcut icon" href="Design/img/favicon.ico">
+
+
+    <!--Alerta Sweet-->
+    <script type="text/javascript" src="/Scripts/sweetalert.min.js"></script>
+    <!--Alerta Sweet 2.0-->
+    <script type="text/javascript" src="/Scripts/sweetalert2.all.min.js"></script>
+
+    <script type="text/javascript">
+        function sweetalert(Title, Text, icon, Button) {
+            Swal.fire({
+                title: Title,
+                text: Text,
+                type: icon,
+            });
+        }
+    </script>
+    <script type="text/javascript">
+        function ToastSweetAlert(Type, Titulo) {
+
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000
+            });
+            Toast.fire({
+                type: Type,
+                title: Titulo
+            });
+        }
+    </script>
+    <script type="text/javascript">
+        function DialogConfirm(Title, Text, icon) {
+            const swalWithBootstrapButtons = Swal.mixin({
+                customClass: {
+                    confirmButton: 'btn btn-success',
+                    cancelButton: 'mr-2 btn btn-danger'
+                },
+                buttonsStyling: false
+            })
+
+            swalWithBootstrapButtons.fire({
+                title: Title,
+                text: Text.text,
+                type: icon,
+                showCancelButton: true,
+                confirmButtonText: 'Yes, delete it!',
+                cancelButtonText: 'No, cancel!',
+                reverseButtons: true
+            }).then((result) => {
+                 
+                if (result.value) {
+                    swalWithBootstrapButtons.fire(
+                        'Deleted!',
+                        'Your file has been deleted.',
+                        'success'
+                    )
+                } else if (
+                    /* Read more about handling dismissals below */
+                    result.dismiss === Swal.DismissReason.cancel
+                ) {
+                    swalWithBootstrapButtons.fire(
+                        'Cancelled',
+                        'Your imaginary file is safe :)',
+                        'error'
+                    )
+                }
+            })
+        }
+    </script>
+    <asp:ContentPlaceHolder ID="HeadContent" runat="server">
+    </asp:ContentPlaceHolder>
+
+</head>
+<body runat="server">
+
+    <form id="form1" runat="server">
+        <asp:HiddenField ID="HField" runat="server" Value=""  />
+        <nav class="side-navbar">
+            <div class="side-navbar-wrapper">
+                <!-- Sidebar Header-->
+                <div class="sidenav-header d-flex align-items-center justify-content-center">
+                    <!-- User Info-->
+                    <div class="sidenav-header-inner text-center">
+                        <img src="/Resources/avatar-default.png" alt="person" class="img-fluid rounded-circle">
+                        <h2 class="h5"><%: (Page.Session["Usuario"]!=null) ?(Page.Session["Usuario"] as Entidades.Usuarios).UserName.ToString() : "Guest"  %></h2>
+                        <span><%: (Page.Session["Empresas"]!=null) ?(Page.Session["Empresas"]as Entidades.Empresas).NombreEmpresa.ToString() : "Guest"  %></span>
+                    </div>
+                    <!-- Small Brand information, appears on minimized sidebar-->
+                    <div class="sidenav-header-logo"><a href="/default.aspx" class="brand-small text-center"><strong>A</strong><strong class="text-primary">S</strong></a></div>
+                </div>
+                <!-- Sidebar Navigation Menus-->
+                <div class="main-menu">
+                    <h5 class="sidenav-heading">Menu Principal</h5>
+                    <ul id="side-main-menu" class="side-menu list-unstyled">
+                        <li class="<%=(System.IO.Path.GetFileName(Request.PhysicalPath).ToString() == "default.aspx" ? "active" : " ")%>">
+                            <a href="/default.aspx"><i class="icon-home"></i>Inicio</a>
+                        </li>
+                        <li>
+                            <a href="#RegistrosDropDown" aria-expanded="false" data-toggle="collapse"><i class="icon-interface-windows"></i>Registros </a>
+                            <ul id="RegistrosDropDown" runat="server" class="collapse list-unstyled ">
+                                <li><a href="/UI/Registros/rProductores.aspx">Productores</a></li>
+                                <li><a href="/UI/Registros/rFactoria.aspx">Factorias</a></li>
+                                <li><a href="/UI/Registros/rTipoArroz.aspx">Tipo de arroz</a></li>
+                                <li><a href="/UI/Registros/rPesadas.aspx">Pesadas</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="#ConsultaDropDown" aria-expanded="false" data-toggle="collapse"><i class="fa fa-bar-chart"></i>Consultas</a>
+                            <ul id="ConsultaDropDown" class="collapse list-unstyled ">
+                                <li><a href="/UI/Consultas/cProductores.aspx">Productores</a></li>
+                                <li><a href="/UI/Consultas/cFactorias.aspx">Factorias</a></li>
+                                <li><a href="/UI/Consultas/cTipoArroz.aspx">Tipo de arroz</a></li>
+                                <li><a href="/UI/Consultas/cPesadas.aspx">Pesadas</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="#exampledropdownDropdown" aria-expanded="false" data-toggle="collapse"><i class="icon-interface-windows"></i>Usuarios </a>
+                            <ul id="exampledropdownDropdown" class="collapse list-unstyled ">
+                                <li><a href="/UI/Registros/rUsuarios.aspx">Registro de usuarios</a></li>
+                                <li><a href="#">Consulta de Usuarios</a></li>
+                                <li><a href="/UI/Consultas/cConsultaSolicitudes.aspx">Ver Solicitudes</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="#"><i class="icon-mail"></i>Demo<div class="badge badge-warning">6 New</div>
+                            </a>
+
+                        </li>
+                    </ul>
+                </div>
+                <div class="admin-menu">
+                    <h5 class="sidenav-heading">Second menu</h5>
+                    <ul id="side-admin-menu" class="side-menu list-unstyled">
+                        <li><a href="#"><i class="icon-screen"></i>Demo</a></li>
+                        <li><a href="#"><i class="icon-flask"></i>Demo
+               
+                            <div class="badge badge-info">Special</div>
+                        </a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <div class="page">
+            <!-- navbar-->
+            <header class="header">
+                <nav class="navbar">
+                    <div class="container-fluid body-content">
+                        <div class="navbar-holder d-flex align-items-center justify-content-between">
+                            <div class="navbar-header">
+                                <a id="toggle-btn" href="#" class="menu-btn"><i class="icon-bars"></i></a><a href="Default.aspx" class="navbar-brand">
+                                    <div class="brand-text d-none d-md-inline-block"><strong class="text-primary">Dashboard</strong></div>
+                                </a>
+                            </div>
+                            <ul class="nav-menu list-unstyled d-flex flex-md-row align-items-md-center">
+                                <!-- Log out-->
+                                <li class="nav-item"><a runat="server" id="LogOut" onserverclick="LogOut_ServerClick" class="nav-link logout"><span class="d-none d-sm-inline-block">Logout</span><i class="fa fa-sign-out"></i></a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </nav>
+            </header>
+            <!-- Breadcrumb-->
+            <div class="breadcrumb-holder">
+                <div class="container-fluid">
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="/Default.aspx">Home</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <asp:ContentPlaceHolder ID="MainContent" runat="server">
+            </asp:ContentPlaceHolder>
+            <footer class="main-footer">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <p>AgroSoft &copy; 2018-2019</p>
+                        </div>
+                        <div class="col-sm-6 text-right">
+                            <p>Design by <a href="https://bootstrapious.com/p/bootstrap-4-dashboard" class="external">Bootstrapious</a></p>
+                            <!-- Please do not remove the backlink to us unless you support further theme's development at https://bootstrapious.com/donate. It is part of the license conditions and it helps me to run Bootstrapious. Thank you for understanding :)-->
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </form>
+    <!-- JavaScript files-->
+    <script src="/Design/vendor/jquery/jquery.min.js"></script>
+    <script src="/Design/vendor/popper.js/umd/popper.min.js"> </script>
+    <script src="/Design/vendor/bootstrap/js/bootstrap.min.js"></script>
+    <script src="/Design/js/grasp_mobile_progress_circle-1.0.0.min.js"></script>
+    <script src="/Design/vendor/jquery.cookie/jquery.cookie.js"> </script>
+    <script src="/Design/vendor/chart.js/Chart.min.js"></script>
+    <script src="/Design/vendor/jquery-validation/jquery.validate.min.js"></script>
+    <script src="/Design/vendor/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js"></script>
+    <script src="/Design/js/avatar.js"></script>
+    <script src="https://kit.fontawesome.com/6fa1d42f74.js"></script>
+    <!-- Main File-->
+    <script src="/Design/js/front.js"></script>
+</body>
+</html>
