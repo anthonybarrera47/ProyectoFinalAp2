@@ -4,6 +4,14 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="HeadContent" runat="server">
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
+    <%@ Register Assembly="Microsoft.ReportViewer.WebForms, Version=15.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
+        Namespace="Microsoft.Reporting.WebForms" TagPrefix="rsweb" %>
+    <script type="text/javascript">
+        function ShowReporte(idmodal, title) {
+            $("#" + idmodal + " .modal-title").html(title);
+            $("#" + idmodal).modal("show");
+        }
+    </script>
     <asp:ScriptManager ID="ScriptManger" runat="server"></asp:ScriptManager>
     <asp:UpdatePanel ID="UpdatePanel" runat="server">
         <ContentTemplate>
@@ -21,7 +29,7 @@
                                         <div class="input-group">
                                             <asp:TextBox runat="server" ID="PesadaIdTxt" TextMode="Number" placeholder="Pesada ID" CssClass="form-control "></asp:TextBox>
                                             <div class="input-group-append">
-                                                <asp:LinkButton runat="server" ID="BuscarButton" OnClick="BuscarButton_Click" class="btn btn-info">
+                                                <asp:LinkButton runat="server" ID="BuscarButton" OnClick="BuscarButton_Click" CssClass="btn btn-info">
                                          <i class="fas fa-search" aria-hidden="true"></i>
                                                 </asp:LinkButton>
                                             </div>
@@ -251,6 +259,7 @@
                         <asp:Button Text="Nuevo" CssClass="btn btn-warning btn-lg" runat="server" ID="NuevoButton" OnClick="NuevoButton_Click" />
                         <asp:Button Text="Guardar" CssClass="btn btn-success btn-lg" runat="server" ID="GuadarButton" OnClick="GuadarButton_Click" ValidationGroup="GuardarVG" />
                         <asp:Button Text="Eliminar" CssClass="btn btn-danger btn-lg" runat="server" ID="EliminarButton" OnClick="EliminarButton_Click" />
+                        <asp:Button Text="Imprimir" CssClass="btn btn-info btn-lg" runat="server" ID="ImprimirReciboButton" OnClick="ImprimirReciboButton_Click" />
                     </div>
                 </div>
             </footer>
@@ -265,5 +274,21 @@
             <asp:AsyncPostBackTrigger ControlID="FactoriaIdTextBox" />
         </Triggers>
     </asp:UpdatePanel>
-
+    <div class="modal fade" id="ModalReporte" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content bigModal">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="ModalLebel"></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <%--Viewer--%>
+                    <rsweb:ReportViewer ID="Reportviewer" runat="server" ProcessingMode="Remote" Height="100%" Width="100%">
+                    </rsweb:ReportViewer>
+                </div>
+            </div>
+        </div>
+    </div>
 </asp:Content>

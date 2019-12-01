@@ -4,6 +4,7 @@ using ClosedXML.Extensions;
 using Entidades;
 using Extensores;
 using Herramientas;
+using Microsoft.Reporting.WebForms;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -46,13 +47,13 @@ namespace ProyectoFinalAp2.UI.Consultas
             }
             DateTime fechaDesde = FechaDesdeTextBox.Text.ToDatetime();
             DateTime FechaHasta = FechaHastaTextBox.Text.ToDatetime();
-            
+
             if (Request.Form["FiltraFecha"] != null)
                 lista = repositorio.GetList(filtro).Where(x => x.Fecha >= fechaDesde && x.Fecha <= FechaHasta).ToList();
             else
                 lista = repositorio.GetList(filtro);
             repositorio.Dispose();
-            this.BindGrid(lista.Where(x=>x.EmpresaId==Empresa.EmpresaID).ToList());
+            this.BindGrid(lista.Where(x => x.EmpresaId == Empresa.EmpresaID).ToList());
         }
         private void BindGrid(List<TipoArroz> lista)
         {
@@ -63,16 +64,21 @@ namespace ProyectoFinalAp2.UI.Consultas
         }
         protected void ImprimirButton_Click(object sender, EventArgs e)
         {
-            ScriptManager.RegisterStartupScript(this.Page, this.Page.GetType(), "Popup", $"ShowReporte('Listado de Analisis');", true);
+            Utils.MostrarModal(this, "ModalReporte", "Listado de Tipos de Arroz");
+            
+            List<Empresas> empresas = new List<Empresas>();
+            List<TipoArroz> ListaImprimir = ((List<TipoArroz>)ViewState[KeyViewState]);
+            empresas.Add(Empresa);
+            Reportviewer.ProcessingMode = Microsoft.Reporting.WebForms.ProcessingMode.Local;
+            Reportviewer.Reset();
+            Reportviewer.LocalReport.ReportPath = Server.MapPath(@"~\UI\Reportes\ListadoTipoArroz.rdlc");
+            Reportviewer.LocalReport.DataSources.Clear();
 
-            //ReportViewer.ProcessingMode = Microsoft.Reporting.WebForms.ProcessingMode.Local;
-            //ReportViewer.Reset();
-            //ReportViewer.LocalReport.ReportPath = Server.MapPath(@"~\Reportes\ListadoAnalisis.rdlc");
-            //ReportViewer.LocalReport.DataSources.Clear();
-
-            //ReportViewer.LocalReport.DataSources.Add(new ReportDataSource("Analisis",
-            //                                                   lista));
-            //ReportViewer.LocalReport.Refresh();
+            Reportviewer.LocalReport.DataSources.Add(new ReportDataSource("Empresa",
+                                                               empresas));
+            Reportviewer.LocalReport.DataSources.Add(new ReportDataSource("TipoArrozDataSet",
+                                                               ListaImprimir));
+            Reportviewer.LocalReport.Refresh();
         }
 
         protected void DatosGridView_PageIndexChanging(object sender, GridViewPageEventArgs e)
@@ -84,15 +90,15 @@ namespace ProyectoFinalAp2.UI.Consultas
 
         protected void ExportarButton_Click(object sender, EventArgs e)
         {
-            List<TipoArroz> lista = ((List<TipoArroz>)ViewState[KeyViewState] );
-            
+            List<TipoArroz> lista = ((List<TipoArroz>)ViewState[KeyViewState]);
+
             DataTable dt = Utils.ToDataTable<TipoArroz>(lista);
             XLWorkbook workbook = new XLWorkbook();
             workbook.AddWorksheet(dt);
             Response.Clear();
             Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
             Response.AddHeader("content-disposition", "attachment;filename=\"ListadoTipoArroz.xlsx\"");
-            
+
             using (var memoryStream = new MemoryStream())
             {
                 workbook.SaveAs(memoryStream);

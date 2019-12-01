@@ -22,11 +22,6 @@ namespace ProyectoFinalAp2.UI.Registros
         {
             Empresa = (Session["Empresas"] as Entidades.Empresas);
             Usuario = (Session["Usuario"] as Entidades.Usuarios);
-            if (!RepositorioUsuarios.UsuarioEsAdministrador(Usuario))
-            {
-                Response.Redirect("~/default.aspx");
-                return;
-            }
             if (!Page.IsPostBack)
             {
                 Limpiar();
@@ -36,7 +31,7 @@ namespace ProyectoFinalAp2.UI.Registros
                 {
                     RepositorioBase<Factoria> repositorio = new RepositorioBase<Factoria>();
                     var Factoria = repositorio.Buscar(id);
-                    if (Factoria.EsNulo() || PerteneceALaEmpresa(Factoria.EmpresaId))
+                    if (Factoria.EsNulo() || !PerteneceALaEmpresa(Factoria.FactoriaId))
                         Utils.Alerta(this, TipoTitulo.Informacion, TiposMensajes.RegistroNoEncontrado, IconType.info);
                     else
                         LlenarCampos(Factoria);
@@ -54,14 +49,16 @@ namespace ProyectoFinalAp2.UI.Registros
         }
         public Factoria LLenaClase()
         {
-            Factoria factoria = new Factoria();
-            factoria.FactoriaId = FactoriaIdTxt.Text.ToInt();
-            factoria.Nombre = NombresTxt.Text;
-            factoria.Direccion = DireccionTxt.Text;
-            factoria.Telefono = TelefonoTxt.Text;
-            factoria.Fecha = FechaTextBox.Text.ToDatetime();
-            factoria.EmpresaId = Empresa.EmpresaID;
-            factoria.UsuarioId = Usuario.UsuarioId;
+            Factoria factoria = new Factoria
+            {
+                FactoriaId = FactoriaIdTxt.Text.ToInt(),
+                Nombre = NombresTxt.Text,
+                Direccion = DireccionTxt.Text,
+                Telefono = TelefonoTxt.Text,
+                Fecha = FechaTextBox.Text.ToDatetime(),
+                EmpresaId = Empresa.EmpresaID,
+                UsuarioId = Usuario.UsuarioId
+            };
             return factoria;
         }
         public void LlenarCampos(Factoria factoria)
@@ -155,6 +152,8 @@ namespace ProyectoFinalAp2.UI.Registros
         {
             RepositorioBase<Factoria> repositorio = new RepositorioBase<Factoria>();
             Factoria factoria = repositorio.Buscar(id);
+            if (factoria.EsNulo())
+                return false;
             return factoria.EmpresaId == Empresa.EmpresaID;
         }
     }

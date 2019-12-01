@@ -8,6 +8,14 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="HeadContent" runat="server">
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
+    <%@ Register Assembly="Microsoft.ReportViewer.WebForms, Version=15.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91"
+        Namespace="Microsoft.Reporting.WebForms" TagPrefix="rsweb" %>
+    <script type="text/javascript">
+        function ShowReporte(idmodal,title) {
+            $("#" + idmodal + " .modal-title").html(title);
+            $("#" + idmodal).modal("show");
+        }
+    </script>
     <asp:ScriptManager ID="ScriptManager" runat="server"></asp:ScriptManager>
     <asp:UpdatePanel ID="UpdatePanel" runat="server">
         <ContentTemplate>
@@ -82,8 +90,7 @@
                                             <Columns>
                                                 <asp:HyperLinkField HeaderText="Opciones" ControlStyle-CssClass="btn btn-light btn-sm"
                                                     DataNavigateUrlFields="TipoArrozId"
-                                                    DataNavigateUrlFormatString="~/UI/Registros/rTipoArroz.aspx?TipoArrozId={0}" Text="<i class='far fa-edit' aria-hidden='true'></i>">
-                                                </asp:HyperLinkField>
+                                                    DataNavigateUrlFormatString="~/UI/Registros/rTipoArroz.aspx?TipoArrozId={0}" Text="<i class='far fa-edit' aria-hidden='true'></i>"></asp:HyperLinkField>
                                                 <asp:BoundField HeaderText="TipoArrozId" DataField="TipoArrozId" Visible="false" />
                                                 <asp:BoundField HeaderText="Fecha" DataField="Fecha" DataFormatString="{0:dd/MM/yyyy}" />
                                                 <asp:BoundField HeaderText="Descripcion" DataField="Descripcion" />
@@ -99,7 +106,7 @@
                         <div class="card-footer">
                             <div class="text-left">
                                 <div class="form-group" display: inline-block>
-                                    <asp:Button Text="Imprimir" CssClass="btn btn-outline-info btn-lg" runat="server" ID="ImprimirButton" />
+                                    <asp:Button Text="Imprimir" CssClass="btn btn-outline-info btn-lg" runat="server" ID="ImprimirButton" OnClick="ImprimirButton_Click" data-target="#ModalReporte" />
                                     <asp:Button Text="Exportar" CssClass="btn btn-outline-primary btn-lg" runat="server" ID="ExportarButton" OnClick="ExportarButton_Click" />
                                 </div>
                             </div>
@@ -111,7 +118,25 @@
         <Triggers>
             <asp:AsyncPostBackTrigger ControlID="DatosGridView" />
             <asp:AsyncPostBackTrigger ControlID="BuscarButton" />
+            <asp:AsyncPostBackTrigger ControlID="ImprimirButton" />
             <asp:PostBackTrigger ControlID="ExportarButton" />
         </Triggers>
     </asp:UpdatePanel>
+    <div class="modal fade" id="ModalReporte" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content bigModal">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="ModalLebel">Reporte de Analisis</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <%--Viewer--%>
+                    <rsweb:ReportViewer ID="Reportviewer" runat="server" ProcessingMode="Remote" Height="100%" Width="100%">
+                    </rsweb:ReportViewer>
+                </div>
+            </div>
+        </div>
+    </div>
 </asp:Content>

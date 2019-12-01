@@ -29,7 +29,7 @@ namespace ProyectoFinalAp2.UI.Registros
                 {
                     RepositorioBase<Productores> repositorio = new RepositorioBase<Productores>();
                     var Productores = repositorio.Buscar(id);
-                    if (Productores.EsNulo() || PerteneceALaEmpresa(Productores.EmpresaId))
+                    if (Productores.EsNulo() || !PerteneceALaEmpresa(Productores.ProductorId))
                         Utils.Alerta(this, TipoTitulo.Informacion, TiposMensajes.RegistroNoEncontrado, IconType.info);
                     else
                         LlenarCampos(Productores);
@@ -157,6 +157,8 @@ namespace ProyectoFinalAp2.UI.Registros
         {
             RepositorioBase<Productores> repositorio = new RepositorioBase<Productores>();
             Productores productor = repositorio.Buscar(id);
+            if (productor.EsNulo())
+                return false;
             return productor.EmpresaId == Empresa.EmpresaID;
         }
     }

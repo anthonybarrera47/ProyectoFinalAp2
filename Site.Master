@@ -103,6 +103,14 @@
             })
         }
     </script>
+    <style type="text/css">
+        .bigModal {
+            width: 1080px;
+            height: 800px;
+            margin-left: -200px;
+        }
+    </style>
+  
     <asp:ContentPlaceHolder ID="HeadContent" runat="server">
     </asp:ContentPlaceHolder>
 
@@ -121,7 +129,7 @@
                         <span><%: (Page.Session["Empresas"]!=null) ?(Page.Session["Empresas"]as Entidades.Empresas).NombreEmpresa.ToString() : "Guest"  %></span>
                     </div>
                     <!-- Small Brand information, appears on minimized sidebar-->
-                    <div class="sidenav-header-logo"><a href="/default.aspx" class="brand-small text-center"><strong>A</strong><strong class="text-primary">S</strong></a></div>
+                    <div class="sidenav-header-logo"><a href="/Default.aspx" class="brand-small text-center"><strong>A</strong><strong class="text-primary">S</strong></a></div>
                 </div>
                 <!-- Sidebar Navigation Menus-->
                 <div class="main-menu">
@@ -184,7 +192,7 @@
                     <div class="container-fluid body-content">
                         <div class="navbar-holder d-flex align-items-center justify-content-between">
                             <div class="navbar-header">
-                                <a id="toggle-btn" href="#" class="menu-btn"><i class="icon-bars"></i></a><a href="Default.aspx" class="navbar-brand">
+                                <a id="toggle-btn" href="#" class="menu-btn"><i class="icon-bars"></i></a><a href="/Default.aspx" class="navbar-brand">
                                     <div class="brand-text d-none d-md-inline-block"><strong class="text-primary">Panel de Control</strong></div>
                                 </a>
                             </div>

@@ -33,7 +33,7 @@ namespace ProyectoFinalAp2.UI.Registros
                 {
                     RepositorioUsuarios repositorio = new RepositorioUsuarios();
                     var Usuario = repositorio.Buscar(id);
-                    if (Usuario.EsNulo() || PerteneceALaEmpresa(Usuario.Empresa))
+                    if (Usuario.EsNulo() || !PerteneceALaEmpresa(Usuario.UsuarioId))
                         Utils.Alerta(this, TipoTitulo.Informacion, TiposMensajes.RegistroNoEncontrado, IconType.info);
                     else
                         LlenarCampos(Usuario);
@@ -86,6 +86,8 @@ namespace ProyectoFinalAp2.UI.Registros
         {
             RepositorioUsuarios repositorio = new RepositorioUsuarios();
             Usuarios user = repositorio.Buscar(id);
+            if (user.EsNulo())
+                return false;
             return user.Empresa == Empresa.EmpresaID;
         }
         protected void BuscarButton_Click(object sender, EventArgs e)

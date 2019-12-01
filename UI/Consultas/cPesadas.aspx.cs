@@ -3,6 +3,7 @@ using ClosedXML.Excel;
 using Entidades;
 using Extensores;
 using Herramientas;
+using Microsoft.Reporting.WebForms;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -57,7 +58,7 @@ namespace ProyectoFinalAp2.UI.Consultas
             else
                 lista = repositorio.GetList(filtro);
             repositorio.Dispose();
-            this.BindGrid(lista.Where(x=>x.EmpresaId==Empresa.EmpresaID).ToList());
+            this.BindGrid(lista.Where(x => x.EmpresaId == Empresa.EmpresaID).ToList());
         }
         private void BindGrid(List<Pesadas> lista)
         {
@@ -69,9 +70,9 @@ namespace ProyectoFinalAp2.UI.Consultas
 
         protected void ExportarButton_Click(object sender, EventArgs e)
         {
-            List<Factoria> lista = ((List<Factoria>)ViewState[KeyViewState]);
+            List<Pesadas> lista = ((List<Pesadas>)ViewState[KeyViewState]);
 
-            DataTable dt = Utils.ToDataTable<Factoria>(lista);
+            DataTable dt = Utils.ToDataTable<Pesadas>(lista);
             XLWorkbook workbook = new XLWorkbook();
             workbook.AddWorksheet(dt);
             Response.Clear();
@@ -85,6 +86,62 @@ namespace ProyectoFinalAp2.UI.Consultas
             }
             Response.End();
             workbook.Dispose();
+        }
+
+        protected void DetalleDatosGridView_PageIndexChanging(object sender, GridViewPageEventArgs e)
+        {
+            DetalleDatosGridView.DataSource = lista;
+            DetalleDatosGridView.PageIndex = e.NewPageIndex;
+            DetalleDatosGridView.DataBind();
+        }
+
+        protected void VerDetalleButton_Click(object sender, EventArgs e)
+        {
+            Utils.MostrarModal(this.Page, "ModalDetalle", "Detalle");
+            GridViewRow row = (sender as Button).NamingContainer as GridViewRow;
+            var Pesada = lista.ElementAt(row.RowIndex);
+            RepositorioPesadas Repositorio = new RepositorioPesadas();
+            List<PesadasDetalle> Details = Repositorio.Buscar(Pesada.PesadaId).Detalles;
+            DetalleDatosGridView.DataSource = null;
+            DetalleDatosGridView.DataSource = Details;
+            DetalleDatosGridView.DataBind();
+            Repositorio.Dispose();
+        }
+
+        protected void ImprimirButton_Click(object sender, EventArgs e)
+        {
+            Utils.MostrarModal(this, "ModalReporte", "Listado de Pesadas");
+            RepositorioBase<Productores> repositorio = new RepositorioBase<Productores>();
+            RepositorioBase<Factoria> repositorioFactoria = new RepositorioBase<Factoria>();
+            List<Empresas> empresas = new List<Empresas>();
+            List<Productores> productores = new List<Productores>();
+            List<Factoria> Factorias = new List<Factoria>();
+            List<Pesadas> pesadasImprimir = ((List<Pesadas>)ViewState[KeyViewState]);
+            Productores productor = new Productores();
+            Factoria factoria = new Factoria();
+            foreach (var item in lista)
+            {
+                productor = repositorio.Buscar(item.ProductorId);
+                productores.Add(productor);
+                factoria = repositorioFactoria.Buscar(item.FactoriaId);
+                Factorias.Add(factoria);
+            }
+            repositorioFactoria.Dispose();
+            repositorio.Dispose();
+            empresas.Add(Empresa);
+            Reportviewer.ProcessingMode = Microsoft.Reporting.WebForms.ProcessingMode.Local;
+            Reportviewer.Reset();
+            Reportviewer.LocalReport.ReportPath = Server.MapPath(@"~\UI\Reportes\ListadoPesadas.rdlc");
+            Reportviewer.LocalReport.DataSources.Clear();
+            Reportviewer.LocalReport.DataSources.Add(new ReportDataSource("EmpresaDS",
+                                                               empresas));
+            Reportviewer.LocalReport.DataSources.Add(new ReportDataSource("PesadaDS",
+                                                               pesadasImprimir));
+            Reportviewer.LocalReport.DataSources.Add(new ReportDataSource("ProductoresDS",
+                                                               productores));
+            Reportviewer.LocalReport.DataSources.Add(new ReportDataSource("Factoria",
+                                                               Factorias));
+            Reportviewer.LocalReport.Refresh();
         }
     }
 }

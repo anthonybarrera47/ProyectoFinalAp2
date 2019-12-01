@@ -3,6 +3,7 @@ using ClosedXML.Excel;
 using Entidades;
 using Extensores;
 using Herramientas;
+using Microsoft.Reporting.WebForms;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -89,6 +90,25 @@ namespace ProyectoFinalAp2.UI.Consultas
             }
             Response.End();
             workbook.Dispose();
+        }
+
+        protected void ImprimirButton_Click(object sender, EventArgs e)
+        {
+            Utils.MostrarModal(this, "ModalReporte", "Listado de Tipos de Arroz");
+
+            List<Empresas> empresas = new List<Empresas>();
+            List<Productores> ListaImprimir = ((List<Productores>)ViewState[KeyViewState]);
+            empresas.Add(Empresa);
+            Reportviewer.ProcessingMode = Microsoft.Reporting.WebForms.ProcessingMode.Local;
+            Reportviewer.Reset();
+            Reportviewer.LocalReport.ReportPath = Server.MapPath(@"~\UI\Reportes\ListadoProductores.rdlc");
+            Reportviewer.LocalReport.DataSources.Clear();
+
+            Reportviewer.LocalReport.DataSources.Add(new ReportDataSource("EmpresaDS",
+                                                               empresas));
+            Reportviewer.LocalReport.DataSources.Add(new ReportDataSource("ProductoresDS",
+                                                               ListaImprimir));
+            Reportviewer.LocalReport.Refresh();
         }
     }
 }

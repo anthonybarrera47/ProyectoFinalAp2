@@ -3,6 +3,7 @@ using Entidades;
 using Enums;
 using Extensores;
 using Herramientas;
+using Microsoft.Reporting.WebForms;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,7 +31,7 @@ namespace ProyectoFinalAp2.UI.Registros
                 if (id > 0)
                 {
                     var pesadas = new RepositorioPesadas().Buscar(id);
-                    if (pesadas.EsNulo() || !PerteneceALaEmpresa(pesadas.EmpresaId))
+                    if (pesadas.EsNulo() || !PerteneceALaEmpresa(pesadas.PesadaId))
                         Utils.Alerta(this, TipoTitulo.Informacion, TiposMensajes.RegistroNoEncontrado, IconType.info);
                     else
                     {
@@ -38,12 +39,11 @@ namespace ProyectoFinalAp2.UI.Registros
                         LlenarCampos();
                     }
                 }
-
             }
         }
         private bool Validar()
         {
-            Pesadas pesadas = ViewStateToEntity(ViewState[KeyViewState]);
+            Pesadas pesadas = LlenaClase();
             bool paso = Page.IsValid;
             if (pesadas.Detalles.Count < 1)
                 paso = false;
@@ -57,7 +57,7 @@ namespace ProyectoFinalAp2.UI.Registros
                 paso = false;
             if (pesadas.TotalPagar < 1)
                 paso = false;
-            
+
             return paso;
         }
         private void LlenarCampos()
@@ -207,7 +207,7 @@ namespace ProyectoFinalAp2.UI.Registros
         {
             RepositorioPesadas repositorio = new RepositorioPesadas();
             Pesadas Pesada = repositorio.Buscar(PesadaIdTxt.Text.ToInt());
-            return !repositorio.EsNulo() && PerteneceALaEmpresa(Pesada.EmpresaId);
+            return !repositorio.EsNulo() && PerteneceALaEmpresa(Pesada.PesadaId);
         }
         protected void EliminarButton_Click(object sender, EventArgs e)
         {
@@ -325,6 +325,8 @@ namespace ProyectoFinalAp2.UI.Registros
         {
             RepositorioPesadas repositorio = new RepositorioPesadas();
             Pesadas Pesadas = repositorio.Buscar(id);
+            if (Pesadas.EsNulo())
+                return false;
             return Pesadas.EmpresaId == Empresa.EmpresaID;
         }
         private Pesadas ViewStateToEntity(object obj)
@@ -338,6 +340,54 @@ namespace ProyectoFinalAp2.UI.Registros
         protected void CustomFactoria_ServerValidate(object source, ServerValidateEventArgs args)
         {
             args.IsValid = BuscarFactoria();
+        }
+
+        protected void ImprimirReciboButton_Click(object sender, EventArgs e)
+        {
+            RepositorioPesadas repositorioPesadas = new RepositorioPesadas();
+            Pesadas Pesada = repositorioPesadas.Buscar(PesadaIdTxt.Text.ToInt());
+            if (!Pesada.EsNulo())
+            {
+                Utils.MostrarModal(this, "ModalReporte", "Recibo de Pesadas");
+                Factoria Factoria = new RepositorioBase<Factoria>().Buscar(Pesada.FactoriaId);
+                Productores Productor = new RepositorioBase<Productores>().Buscar(Pesada.ProductorId);
+                List<Empresas> Empresa = new List<Empresas>();
+                List<TipoArroz> ListaTipoArroz = new List<TipoArroz>();
+                List<Pesadas> ListaPesada = new List<Pesadas>();
+                List<Factoria> ListaFactoria = new List<Factoria>();
+                List<Productores> ListaProductor = new List<Productores>();
+
+                ListaPesada.Add(Pesada);
+                ListaFactoria.Add(Factoria);
+                ListaProductor.Add(Productor);
+                Empresa.Add(this.Empresa);
+
+                foreach (var item in Pesada.Detalles.ToList())
+                {
+                    ListaTipoArroz.Add(new RepositorioBase<TipoArroz>().Buscar(item.TipoArrozId));
+                }
+
+                Reportviewer.ProcessingMode = Microsoft.Reporting.WebForms.ProcessingMode.Local;
+                Reportviewer.Reset();
+                Reportviewer.LocalReport.ReportPath = Server.MapPath(@"~\UI\Reportes\ReciboPesada.rdlc");
+                Reportviewer.LocalReport.DataSources.Clear();
+                Reportviewer.LocalReport.DataSources.Add(new ReportDataSource("EmpresaDS",
+                                                                   Empresa));
+                Reportviewer.LocalReport.DataSources.Add(new ReportDataSource("PesadaDS",
+                                                                   ListaPesada));
+                Reportviewer.LocalReport.DataSources.Add(new ReportDataSource("ProductorDS",
+                                                                   ListaProductor));
+                Reportviewer.LocalReport.DataSources.Add(new ReportDataSource("FactoriaDS",
+                                                                  ListaFactoria));
+                Reportviewer.LocalReport.DataSources.Add(new ReportDataSource("TipoArrozDS",
+                                                                   ListaTipoArroz));
+                Reportviewer.LocalReport.DataSources.Add(new ReportDataSource("DetalleDS",
+                                                                   Pesada.Detalles));
+                Reportviewer.LocalReport.Refresh();
+            }
+            else
+                Utils.Alerta(this, TipoTitulo.OperacionExitosa, TiposMensajes.RegistroNoEncontrado, IconType.error);
+
         }
     }
 }

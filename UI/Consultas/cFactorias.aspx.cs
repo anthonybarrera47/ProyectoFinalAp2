@@ -3,6 +3,7 @@ using ClosedXML.Excel;
 using Entidades;
 using Extensores;
 using Herramientas;
+using Microsoft.Reporting.WebForms;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -88,6 +89,25 @@ namespace ProyectoFinalAp2.UI.Consultas
             }
             Response.End();
             workbook.Dispose();
+        }
+        
+        protected void ImprimirButton_Click(object sender, EventArgs e)
+        {
+            Utils.MostrarModal(this, "ModalReporte", "Listado de Factorias");
+
+            List<Empresas> empresas = new List<Empresas>();
+            List<Factoria> ListaImprimir = ((List<Factoria>)ViewState[KeyViewState]);
+
+            empresas.Add(Empresa);
+            Reportviewer.ProcessingMode = Microsoft.Reporting.WebForms.ProcessingMode.Local;
+            Reportviewer.Reset();
+            Reportviewer.LocalReport.ReportPath = Server.MapPath(@"~\UI\Reportes\ListadoFactorias.rdlc");
+            Reportviewer.LocalReport.DataSources.Clear();
+            Reportviewer.LocalReport.DataSources.Add(new ReportDataSource("EmpresasDS",
+                                                               empresas));
+            Reportviewer.LocalReport.DataSources.Add(new ReportDataSource("FactoriasDS",
+                                                               ListaImprimir));
+            Reportviewer.LocalReport.Refresh();
         }
     }
 }

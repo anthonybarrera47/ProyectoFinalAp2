@@ -37,9 +37,9 @@ namespace Herramientas
                             $"DialogConfirm('{TituloDescripcion}','{MensajeDescripcion}','{iconTypeDescripcion}')", true);
         }
         
-        public static void MostrarModal(System.Web.UI.Page page, string NombreModal, string Titulo)
+        public static void MostrarModal(System.Web.UI.Page page, string IdModal, string Titulo)
         {
-            ScriptManager.RegisterStartupScript(page, page.GetType(), "Popup", $"{NombreModal}('{ Titulo }');", true);
+            ScriptManager.RegisterStartupScript(page, page.GetType(), "Popup", $"ShowReporte('{IdModal}','{ Titulo }');", true);
         }
         public static DataTable ToDataTable<T>(List<T> items)
         {

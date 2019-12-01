@@ -28,7 +28,7 @@ namespace ProyectoFinalAp2.UI.Registros
                 {
                     RepositorioBase<TipoArroz> repositorio = new RepositorioBase<TipoArroz>();
                     var TipoArroz = repositorio.Buscar(id);
-                    if (TipoArroz.EsNulo() || PerteneceALaEmpresa(TipoArroz.EmpresaId))
+                    if (TipoArroz.EsNulo() || !PerteneceALaEmpresa(TipoArroz.TipoArrozId))
                         Utils.Alerta(this, TipoTitulo.Informacion, TiposMensajes.RegistroNoEncontrado, IconType.info);
                     else
                         LlenarCampos(TipoArroz);
@@ -92,7 +92,7 @@ namespace ProyectoFinalAp2.UI.Registros
             RepositorioBase<TipoArroz> repositorio = new RepositorioBase<TipoArroz>();
             TipoArroz tipoArroz = repositorio.Buscar(TipoArrozIdTxt.Text.ToInt());
             repositorio.Dispose();
-            return !tipoArroz.EsNulo() && PerteneceALaEmpresa(tipoArroz.EmpresaId);
+            return !tipoArroz.EsNulo() && PerteneceALaEmpresa(tipoArroz.TipoArrozId);
         }
 
         private TipoArroz LLenaClase()
@@ -133,7 +133,7 @@ namespace ProyectoFinalAp2.UI.Registros
             if (Id != 0)
             {
                 TipoArroz tipoArroz = repositorio.Buscar(Id);
-                if (!tipoArroz.EsNulo() && PerteneceALaEmpresa(tipoArroz.EmpresaId))
+                if (!tipoArroz.EsNulo() && PerteneceALaEmpresa(tipoArroz.TipoArrozId))
                 {
                     Limpiar();
                     LlenarCampos(tipoArroz);
@@ -157,6 +157,8 @@ namespace ProyectoFinalAp2.UI.Registros
         {
             RepositorioBase<TipoArroz> repositorio = new RepositorioBase<TipoArroz>();
             TipoArroz tipoArroz = repositorio.Buscar(id);
+            if (tipoArroz.EsNulo())
+                return false;
             return tipoArroz.EmpresaId == Empresa.EmpresaID;
         }
     }

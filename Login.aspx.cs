@@ -19,6 +19,7 @@ namespace ProyectoFinalAp2
         {
             RepositorioBase<Usuarios> repositorio = new RepositorioBase<Usuarios>();
             repositorio.GetList(x => true);
+            repositorio.Dispose();
         }
 
         protected void LoginButton_Click(object sender, EventArgs e)
@@ -43,6 +44,7 @@ namespace ProyectoFinalAp2
                         Session["Empresas"] = Empresa;
                         FormsAuthentication.RedirectFromLoginPage(usuarios.UserName, true);
                     }
+                    repositorio.Dispose();
                 }
                 else
                 {
@@ -60,12 +62,14 @@ namespace ProyectoFinalAp2
         {
             if (Page.IsValid)
             {
-                Usuarios usuarios = new Usuarios();
-                usuarios.UserName = UserNameComoEmpresa.Text;
-                usuarios.Correo = EmailComoEmpresatxt.Text.ToString();
-                usuarios.Password = RepositorioUsuarios.SHA1(PasswordComoEmpresa.Text);
-                usuarios.EsPropietarioEmpresa = true;
-                usuarios.TipoUsuario = TipoUsuario.Administrador;
+                Usuarios usuarios = new Usuarios
+                {
+                    UserName = UserNameComoEmpresa.Text,
+                    Correo = EmailComoEmpresatxt.Text.ToString(),
+                    Password = RepositorioUsuarios.SHA1(PasswordComoEmpresa.Text),
+                    EsPropietarioEmpresa = true,
+                    TipoUsuario = TipoUsuario.Administrador
+                };
                 GuardarUsuario(usuarios);
             }
 
@@ -83,6 +87,7 @@ namespace ProyectoFinalAp2
         private bool ExisteEmpresa()
         {
             RepositorioBase<Empresas> repositorio = new RepositorioBase<Empresas>();
+            repositorio.Dispose();
             return repositorio.ExisteEnLaBaseDeDatos(CodigoEmpresaTxt.Text.ToInt());
         }
         protected void GuardarComoUsuario_Click(object sender, EventArgs e)
@@ -127,7 +132,6 @@ namespace ProyectoFinalAp2
                 TiposMensajes tiposMensajes = TiposMensajes.RegistroNoGuardado;
                 IconType iconType = IconType.error;
 
-
                 if (repositorio.Guardar(usuarios))
                 {
                     tipoTitulo = TipoTitulo.OperacionExitosa;
@@ -161,6 +165,7 @@ namespace ProyectoFinalAp2
                             Utils.Alerta(this, TipoTitulo.Informacion, TiposMensajes.EsperarConfirmacion, IconType.info);
                         else
                             Utils.ToastSweet(this, IconType.error, TiposMensajes.ComunicarseConAdmi);
+                        repositorioBase.Dispose();
                     }
 
                 }
@@ -174,6 +179,7 @@ namespace ProyectoFinalAp2
                 }
                 Utils.Alerta(this, tipoTitulo, tiposMensajes, iconType);
                 repositorio.Dispose();
+                repositorioEmpresa.Dispose();
             }
         }
 
